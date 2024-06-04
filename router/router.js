@@ -9,8 +9,8 @@ router.get("/",(req, res )=> {
     res.send("Welcome to the home page");
 })
 
-router.get("/register",registerUser)
-router.get("/login",loginUser)
+router.post("/register",registerUser)
+router.post("/login",loginUser)
 
 
 export default router;

@@ -3,7 +3,6 @@ import mongoose, { mongo } from "mongoose";
 const userSchema = mongoose.Schema({
     displayName:{
         type:String,
-        required:true,
     },
     email:{
         type:String,
@@ -14,6 +13,11 @@ const userSchema = mongoose.Schema({
     },
     photoURL:{
         type:String,
+    },
+    role:{
+        type:String,
+        default:"user",
+        enum:["admin", "moderator","user"]
     }
 
 })
