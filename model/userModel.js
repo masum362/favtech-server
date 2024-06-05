@@ -18,6 +18,10 @@ const userSchema = mongoose.Schema({
         type:String,
         default:"user",
         enum:["admin", "moderator","user"]
+    },
+    isSubscribed:{
+        type:Boolean,
+        default:false,
     }
 
 })

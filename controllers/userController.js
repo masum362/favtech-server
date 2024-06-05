@@ -48,9 +48,48 @@ const loginUser = async (req, res) => {
       expiresIn: "1d",
     });
     console.log(token);
-    return res.cookie("token", token, cookieOptions).json({token,user:isUser});
+    return res
+      .cookie("token", token, cookieOptions)
+      .json({ token, user: isUser });
   } catch (error) {
     return res.status(501).json({ message: error.message });
   }
 };
-export { registerUser, loginUser };
+
+const isAdminUser = async (req, res) => {
+  const { id } = req.params;
+  console.log({id});
+
+  if (req.userId !== id) {
+    return res.status(403).json({ message: "invalid user" });
+  } else {
+    const query = { uid:id };
+    const user = await userModel.findOne(query);
+    let admin = false;
+    if (user) {
+      admin = user?.role === 'admin';
+    }
+    res.status(200).json({ admin });
+
+  }
+};
+
+// const isAdminUser = async (req, res) => {
+//   const { id } = req.params;
+//   console.log({id});
+
+//   if (req.userId !== id) {
+//     return res.status(403).json({ message: "invalid user" });
+//   } else {
+//     const query = { uid:id };
+//     const user = await userModel.findOne(query);
+//     let admin = false;
+//     if (user) {
+//       admin = user?.role === 'admin';
+//     }
+//     res.status(200).json({ admin });
+
+//   }
+// };
+
+export { registerUser, loginUser, isAdminUser };
