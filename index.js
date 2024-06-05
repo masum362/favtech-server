@@ -14,6 +14,7 @@ const corsConfig = {
   credentials: true,
 };
 
+
 const app = express();
 
 app.use(cors(corsConfig));

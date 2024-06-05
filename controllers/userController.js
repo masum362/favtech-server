@@ -1,5 +1,10 @@
 import jwt from "jsonwebtoken";
 import userModel from "../model/userModel.js";
+import Stripe from "stripe";
+import dotenv from 'dotenv'
+dotenv.config();
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+console.log("stripe key", process.env.STRIPE_SECRET_KEY);
 
 const cookieOptions = {
   httpOnly: true,
@@ -58,38 +63,73 @@ const loginUser = async (req, res) => {
 
 const isAdminUser = async (req, res) => {
   const { id } = req.params;
-  console.log({id});
+  console.log({ id });
 
-  if (req.userId !== id) {
-    return res.status(403).json({ message: "invalid user" });
-  } else {
-    const query = { uid:id };
-    const user = await userModel.findOne(query);
-    let admin = false;
-    if (user) {
-      admin = user?.role === 'admin';
+  try {
+    if (req.userId !== id) {
+      return res.status(403).json({ message: "invalid user" });
+    } else {
+      const query = { uid: id };
+      const user = await userModel.findOne(query);
+      let admin = false;
+      if (user) {
+        admin = user?.role === "admin";
+      }
+      res.status(200).json({ admin });
     }
-    res.status(200).json({ admin });
-
+  } catch (error) {
+    return res.status(501).json({ message: error.message });
   }
 };
 
-// const isAdminUser = async (req, res) => {
-//   const { id } = req.params;
-//   console.log({id});
+const isModeratorUser = async (req, res) => {
+  const { id } = req.params;
+  console.log({ id });
+  try {
+    if (req.userId !== id) {
+      return res.status(403).json({ message: "invalid user" });
+    } else {
+      const query = { uid: id };
+      const user = await userModel.findOne(query);
+      let moderator = false;
+      if (user) {
+        moderator = user?.role === "moderator";
+      }
+      res.status(200).json({ moderator });
+    }
+  } catch (error) {
+    return res.status(501).json({ message: error.message });
+  }
+};
 
-//   if (req.userId !== id) {
-//     return res.status(403).json({ message: "invalid user" });
-//   } else {
-//     const query = { uid:id };
-//     const user = await userModel.findOne(query);
-//     let admin = false;
-//     if (user) {
-//       admin = user?.role === 'admin';
-//     }
-//     res.status(200).json({ admin });
+const paymentWithStripe = async (req, res) => {
+  const { customerEmail } = req.body;
+  console.log({customerEmail})
+  try {
+    // Create a new customer and then create an invoice item then invoice it:
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: 5000, // $50 in cents
+      currency: 'usd',
+      receipt_email: customerEmail,
+      description: 'Subscription fee',
+    });
 
-//   }
-// };
+    console.log(paymentIntent)
 
-export { registerUser, loginUser, isAdminUser };
+    res.json({
+      clientSecret: paymentIntent.client_secret,
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(501).json({ message: error.message });
+  }
+};
+
+export {
+  registerUser,
+  loginUser,
+  isAdminUser,
+  isModeratorUser,
+  paymentWithStripe,
+};
