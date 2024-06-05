@@ -1,5 +1,5 @@
 import express from "express";
-import { loginUser, registerUser ,isAdminUser, isModeratorUser, paymentWithStripe} from "../controllers/userController.js";
+import { loginUser, registerUser ,isAdminUser, isModeratorUser, paymentWithStripe,subscribeUser} from "../controllers/userController.js";
 import { verifyToken } from "./auth.js";
 
 const router = express.Router();
@@ -15,5 +15,6 @@ router.post("/login",loginUser)
 router.get("/users/admin/:id",verifyToken,isAdminUser)
 router.get("/users/moderator/:id",verifyToken,isModeratorUser)
 router.post("/create-payment-intent",verifyToken,paymentWithStripe)
+router.post("/payment/subscribe",verifyToken,subscribeUser)
 
 export default router;

@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import userModel from "../model/userModel.js";
 import Stripe from "stripe";
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 console.log("stripe key", process.env.STRIPE_SECRET_KEY);
@@ -104,25 +104,54 @@ const isModeratorUser = async (req, res) => {
 
 const paymentWithStripe = async (req, res) => {
   const { customerEmail } = req.body;
-  console.log({customerEmail})
+  console.log({ customerEmail });
   try {
     // Create a new customer and then create an invoice item then invoice it:
     const paymentIntent = await stripe.paymentIntents.create({
       amount: 5000, // $50 in cents
-      currency: 'usd',
+      currency: "usd",
       receipt_email: customerEmail,
-      description: 'Subscription fee',
+      description: "Subscription fee",
     });
 
-    console.log(paymentIntent)
+    console.log(paymentIntent);
 
     res.json({
       clientSecret: paymentIntent.client_secret,
     });
-
   } catch (error) {
     console.log(error);
     return res.status(501).json({ message: error.message });
+  }
+};
+
+const subscribeUser = async (req, res) => {
+  const { paymentIntentId, uid } = req.body;
+  console.log({ paymentIntentId, uid });
+  try {
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    console.log(paymentIntent);
+
+    if (paymentIntent.status === "succeeded") {
+      const response = await userModel.updateOne(
+        { uid: uid },
+        { isSubscribed: true }
+      );
+      res.json({
+        success: true,
+        message: "Payment verified and subscription updated.",
+        response
+      });
+    } else {
+      res.json({ success: false, message: "Payment not completed." });
+    }
+  } catch (error) {
+    console.log(error.message)
+    res.status(400).send({
+      error: {
+        message: error.message,
+      },
+    });
   }
 };
 
@@ -132,4 +161,5 @@ export {
   isAdminUser,
   isModeratorUser,
   paymentWithStripe,
+  subscribeUser,
 };
