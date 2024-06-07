@@ -30,14 +30,10 @@ const verifyAdmin = async (req, res, next) => {
 
 const verifyModerator = async (req, res, next) => {
   const userId = req.userId;
-  const { id } = req.params;
-  if (userId === id) {
-    return res.status(403).json({ message: "Invalid user" });
-  }
-  const query = { uid: id };
+  const query = { uid: userId };
   const user = await userModel.findOne(query);
-  const isAdmin = user?.role === "moderator";
-  if (!isAdmin) {
+  const isModerator = user?.role === "moderator";
+  if (!isModerator) {
     return res.status(403).send({ message: "forbidden access" });
   }
   next();

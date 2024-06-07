@@ -82,4 +82,36 @@ const deleteUserProduct = async (req, res) => {
   }
 };
 
-export { addProduct, getUserProduct,deleteUserProduct };
+const productReviewQueues = async (req, res) => {
+ 
+  const userId = req.userId;
+  try {
+    const pipeline = [
+      {
+        $addFields: {
+          statusOrder: {
+            $switch: {
+              branches: [
+                { case: { $eq: ["$status", "pending"] }, then: 0 },
+                { case: { $eq: ["$status", "accepted"] }, then: 1 },
+                { case: { $eq: ["$status", "rejected"] }, then: 2 },
+              ],
+              default: 3,
+            },
+          },
+        },
+      },
+      {
+        $sort: { statusOrder: 1 },
+      },
+    ];
+
+    const products = await productModel.aggregate(pipeline);
+    console.log({ products });
+    res.status(200).send(products);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export { addProduct, getUserProduct, deleteUserProduct, productReviewQueues };
