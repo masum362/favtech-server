@@ -15,14 +15,6 @@ const productSchema = mongoose.Schema(
       required: true,
     },
     owner: {
-      name: {
-        type: String,
-        required: true,
-      },
-      imageURL: {
-        type: String,
-        required: true,
-      },
       email: {
         type: String,
       },
@@ -35,7 +27,7 @@ const productSchema = mongoose.Schema(
       type: [String],
       required: true,
     },
-    externalLinks: {
+    external_links: {
       type: String,
       required: true,
     },
