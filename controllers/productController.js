@@ -8,7 +8,7 @@ const addProduct = async (req, res) => {
     const userId = req.userId;
 
     const user = await userModel.findOne({ uid: userId });
-console.log(user) 
+    console.log(user);
     if (user.isSubscribed) {
       const newProduct = new productModel({
         ...product,
@@ -31,7 +31,6 @@ console.log(user)
     });
 
     console.log({ isAlreadyAddedPostByUser });
-    
 
     if (isAlreadyAddedPostByUser) {
       return res
@@ -53,6 +52,16 @@ console.log(user)
         .status(200)
         .json({ response, message: "product added successfully" });
     }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const getUserProduct = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const products = await productModel.find({ "owner.uid": userId });
+    return res.status(200).json({ products });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
