@@ -67,4 +67,19 @@ const getUserProduct = async (req, res) => {
   }
 };
 
-export { addProduct };
+const deleteUserProduct = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const productId = req.params.productId;
+
+    const response = await productModel.deleteOne({
+      _id: productId,
+      "owner.uid": userId,
+    });
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export { addProduct, getUserProduct,deleteUserProduct };

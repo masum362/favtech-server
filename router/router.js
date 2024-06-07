@@ -1,7 +1,7 @@
 import express from "express";
 import { loginUser, registerUser ,isAdminUser, isModeratorUser, paymentWithStripe,subscribeUser} from "../controllers/userController.js";
 import { verifyToken } from "./auth.js";
-import { addProduct } from "../controllers/productController.js";
+import { addProduct, getUserProduct,deleteUserProduct } from "../controllers/productController.js";
 
 const router = express.Router();
 
@@ -21,6 +21,9 @@ router.post("/payment/subscribe",verifyToken,subscribeUser)
 
 // product routes
 router.post("/add-product",verifyToken,addProduct)
+router.get("/get-user-all-products",verifyToken,getUserProduct)
+router.delete("/delete-user-product/:productId",verifyToken,deleteUserProduct)
+
 
 
 export default router;
