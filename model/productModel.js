@@ -39,6 +39,19 @@ const productSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    upvote:{
+      type:Number,
+      default: 0,
+    },
+    downVoe:{
+      type:Number,
+      default: 0,
+    },
+    status:{
+      type:String,
+      default:"pending",
+      enum:["pending", "accepted", "rejected"]
+    }
   },
   { timestamps: true }
 );

@@ -4,7 +4,6 @@ import Stripe from "stripe";
 import dotenv from "dotenv";
 dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-console.log("stripe key", process.env.STRIPE_SECRET_KEY);
 
 const cookieOptions = {
   httpOnly: true,
@@ -15,15 +14,12 @@ const cookieOptions = {
 const registerUser = async (req, res) => {
   try {
     const user = req.body;
-    console.log(user);
     const isAlreadyRegistered = await userModel.findOne({
       uid: user.uid,
     });
     if (isAlreadyRegistered?.displayName) {
-      console.log("called from first stage");
       return res.status(200).json({ message: "Already Registered" });
     } else if (isAlreadyRegistered) {
-      console.log("called from second stage");
       const response = await userModel.updateOne(
         { uid: isAlreadyRegistered.uid },
         { displayName: user.displayName, photoURL: user.photoURL }
@@ -44,7 +40,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { userId } = req.body;
-    console.log(userId);
+
     const isUser = await userModel.findOne({ uid: userId });
     if (!isUser) {
       return res.status(404).json({ message: "Invalid User" });
@@ -52,7 +48,7 @@ const loginUser = async (req, res) => {
     const token = jwt.sign({ id: isUser.uid }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
-    console.log(token);
+
     return res
       .cookie("token", token, cookieOptions)
       .json({ token, user: isUser });
@@ -63,7 +59,6 @@ const loginUser = async (req, res) => {
 
 const isAdminUser = async (req, res) => {
   const { id } = req.params;
-  console.log({ id });
 
   try {
     if (req.userId !== id) {
@@ -84,7 +79,7 @@ const isAdminUser = async (req, res) => {
 
 const isModeratorUser = async (req, res) => {
   const { id } = req.params;
-  console.log({ id });
+
   try {
     if (req.userId !== id) {
       return res.status(403).json({ message: "invalid user" });
@@ -104,7 +99,7 @@ const isModeratorUser = async (req, res) => {
 
 const paymentWithStripe = async (req, res) => {
   const { customerEmail } = req.body;
-  console.log({ customerEmail });
+
   try {
     // Create a new customer and then create an invoice item then invoice it:
     const paymentIntent = await stripe.paymentIntents.create({
@@ -114,23 +109,19 @@ const paymentWithStripe = async (req, res) => {
       description: "Subscription fee",
     });
 
-    console.log(paymentIntent);
-
     res.json({
       clientSecret: paymentIntent.client_secret,
     });
   } catch (error) {
-    console.log(error);
     return res.status(501).json({ message: error.message });
   }
 };
 
 const subscribeUser = async (req, res) => {
   const { paymentIntentId, uid } = req.body;
-  console.log({ paymentIntentId, uid });
+
   try {
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-    console.log(paymentIntent);
 
     if (paymentIntent.status === "succeeded") {
       const response = await userModel.updateOne(
@@ -140,13 +131,12 @@ const subscribeUser = async (req, res) => {
       res.json({
         success: true,
         message: "Payment verified and subscription updated.",
-        response
+        response,
       });
     } else {
       res.json({ success: false, message: "Payment not completed." });
     }
   } catch (error) {
-    console.log(error.message)
     res.status(400).send({
       error: {
         message: error.message,
