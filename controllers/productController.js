@@ -107,9 +107,11 @@ const productReviewQueues = async (req, res) => {
     ];
 
     const products = await productModel.aggregate(pipeline);
+    // const products = await productModel.find({}).sort({status:1});
     console.log({ products });
     res.status(200).send(products);
   } catch (error) {
+    console.log(error.message);
     return res.status(500).json({ message: error.message });
   }
 };
