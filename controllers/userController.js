@@ -137,13 +137,11 @@ const subscribeUser = async (req, res) => {
       res.json({ success: false, message: "Payment not completed." });
     }
   } catch (error) {
-    res.status(400).send({
-      error: {
-        message: error.message,
-      },
-    });
+    return res.status(501).json({ message: error.message });
   }
 };
+
+
 
 export {
   registerUser,
@@ -152,4 +150,5 @@ export {
   isModeratorUser,
   paymentWithStripe,
   subscribeUser,
+
 };

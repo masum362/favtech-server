@@ -15,16 +15,19 @@ const verifyToken = (req, res, next) => {
 
 const verifyAdmin = async (req, res, next) => {
   const userId = req.userId;
-  const { id } = req.params;
-  if (userId === id) {
-    return res.status(403).json({ message: "Invalid user" });
-  }
-  const query = { uid: id };
+  // const { id } = req.params;
+  // if (userId === id) {
+  //   return res.status(403).json({ message: "Invalid user" });
+  // }
+  const query = { uid: userId };
   const user = await userModel.findOne(query);
+  // console.log(user);
   const isAdmin = user?.role === "admin";
+  // console.log({isAdmin})
   if (!isAdmin) {
     return res.status(403).send({ message: "forbidden access" });
   }
+  req.user = user;
   next();
 };
 
@@ -36,7 +39,8 @@ const verifyModerator = async (req, res, next) => {
   if (!isModerator) {
     return res.status(403).send({ message: "forbidden access" });
   }
+  req.user = user;
   next();
 };
 
-export { verifyToken,verifyAdmin,verifyModerator};
+export { verifyToken, verifyAdmin, verifyModerator };

@@ -20,7 +20,11 @@ import {
   deleteReportedContent,
   addReview,
 } from "../controllers/productController.js";
-import { getAllStatistics } from "../controllers/adminController.js";
+import {
+  getAllStatistics,
+  getUsers,
+  setRoleUser,
+} from "../controllers/adminController.js";
 
 const router = express.Router();
 
@@ -37,10 +41,16 @@ router.get("/users/moderator/:id", verifyToken, isModeratorUser);
 router.post("/create-payment-intent", verifyToken, paymentWithStripe);
 router.post("/payment/subscribe", verifyToken, subscribeUser);
 
+// admin only routes
+router.get("/users", verifyToken, verifyAdmin, getUsers);
+router.patch("/user/role/:userId", verifyToken, verifyAdmin, setRoleUser);
+
 // product routes
 router.get("/get-user-all-products", verifyToken, getUserProduct);
 router.get("/products", verifyToken, verifyModerator, productReviewQueues);
 router.post("/add-product", verifyToken, addProduct);
+
+// moderator only routes
 router.patch(
   "/product/feature/:productId",
   verifyToken,
@@ -62,15 +72,15 @@ router.delete(
 // reported content routes
 router.get("/get-reported-contents", getReportedContents);
 router.get("/add-reported-content", addReportedContent);
+router.post("/add-review", addReview);
 router.delete(
   "/reported-content/delete/:productId",
   verifyToken,
   verifyModerator,
   deleteReportedContent
 );
-router.post("/add-review", addReview);
 
 // get all admin routes
-router.get("/statistics",  getAllStatistics);
+router.get("/statistics", getAllStatistics);
 
 export default router;
