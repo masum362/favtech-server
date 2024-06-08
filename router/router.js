@@ -14,7 +14,9 @@ import {
   deleteUserProduct,
   productReviewQueues,
   featureProduct,
-  acceptProduct
+  statusProduct,
+  getReportedContents,
+  addReportedContent
 } from "../controllers/productController.js";
 
 const router = express.Router();
@@ -37,11 +39,16 @@ router.get("/get-user-all-products", verifyToken, getUserProduct);
 router.get("/products", verifyToken, verifyModerator, productReviewQueues);
 router.post("/add-product", verifyToken, addProduct);
 router.patch("/product/feature/:productId", verifyToken,verifyModerator,featureProduct)
-router.patch("/product/accept/:productId", verifyToken,verifyModerator,acceptProduct)
+router.patch("/product/status/:productId", verifyToken,verifyModerator,statusProduct)
 router.delete(
   "/delete-user-product/:productId",
   verifyToken,
   deleteUserProduct
 );
+
+
+// reported content routes
+router.get("/get-reported-contents",getReportedContents)
+router.get("/add-reported-content",addReportedContent)
 
 export default router;

@@ -1,14 +1,15 @@
 import productModel from "../model/productModel.js";
+import reportedContentModel from "../model/reportedContentModel.js";
 import userModel from "../model/userModel.js";
 
 const addProduct = async (req, res) => {
   try {
     const { product } = req.body;
-    console.log(product);
+
     const userId = req.userId;
 
     const user = await userModel.findOne({ uid: userId });
-    console.log(user);
+
     if (user.isSubscribed) {
       const newProduct = new productModel({
         ...product,
@@ -20,7 +21,6 @@ const addProduct = async (req, res) => {
         },
       });
 
-      console.log({ newProduct });
       const response = await newProduct.save();
       return res
         .status(200)
@@ -29,8 +29,6 @@ const addProduct = async (req, res) => {
     const isAlreadyAddedPostByUser = await productModel.findOne({
       "owner.uid": userId,
     });
-
-    console.log({ isAlreadyAddedPostByUser });
 
     if (isAlreadyAddedPostByUser) {
       return res
@@ -46,7 +44,7 @@ const addProduct = async (req, res) => {
           uid: user.uid,
         },
       });
-      console.log({ newProduct });
+
       const response = await newProduct.save();
       return res
         .status(200)
@@ -107,10 +105,9 @@ const productReviewQueues = async (req, res) => {
 
     const products = await productModel.aggregate(pipeline);
     // const products = await productModel.find({}).sort({status:1});
-    console.log({ products });
+
     res.status(200).send(products);
   } catch (error) {
-    console.log(error.message);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -135,18 +132,19 @@ const featureProduct = async (req, res) => {
   }
 };
 
-const acceptProduct = async (req, res) => {
+const statusProduct = async (req, res) => {
   try {
     const { productId } = req.params;
-
+    const { status } = req.body;
+    console.log({ status });
     const product = await productModel.findOne({ _id: productId });
 
-    if (product.status ==="accepted") {
-      return res.status(204).json({ message: "Already accepted product!" });
+    if (product.status === status) {
+      return res.status(204).json({ message: `Already ${status} product!` });
     } else {
       const response = await productModel.updateOne(
         { _id: productId },
-        { status: "accepted" }
+        { status: status }
       );
       return res.status(200).json({ message: "Success!", response });
     }
@@ -155,4 +153,36 @@ const acceptProduct = async (req, res) => {
   }
 };
 
-export { addProduct, getUserProduct, deleteUserProduct, productReviewQueues,featureProduct ,acceptProduct};
+const getReportedContents = async (req, res) => {
+  try {
+    const contents = await reportedContentModel
+      .find({})
+      .populate("productId");
+    return res.status(200).json(contents);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const addReportedContent = async (req, res) => {
+  try {
+   const productId = req.params;
+
+    const newContent = new reportedContentModel(productId);
+    const response = await newContent.save();
+    return res.status(200).json(newContent);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export {
+  addProduct,
+  getUserProduct,
+  deleteUserProduct,
+  productReviewQueues,
+  featureProduct,
+  statusProduct,
+  getReportedContents,
+  addReportedContent,
+};
