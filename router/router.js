@@ -17,8 +17,10 @@ import {
   statusProduct,
   getReportedContents,
   addReportedContent,
-  deleteReportedContent
+  deleteReportedContent,
+  addReview,
 } from "../controllers/productController.js";
+import { getAllStatistics } from "../controllers/adminController.js";
 
 const router = express.Router();
 
@@ -39,18 +41,36 @@ router.post("/payment/subscribe", verifyToken, subscribeUser);
 router.get("/get-user-all-products", verifyToken, getUserProduct);
 router.get("/products", verifyToken, verifyModerator, productReviewQueues);
 router.post("/add-product", verifyToken, addProduct);
-router.patch("/product/feature/:productId", verifyToken,verifyModerator,featureProduct)
-router.patch("/product/status/:productId", verifyToken,verifyModerator,statusProduct)
+router.patch(
+  "/product/feature/:productId",
+  verifyToken,
+  verifyModerator,
+  featureProduct
+);
+router.patch(
+  "/product/status/:productId",
+  verifyToken,
+  verifyModerator,
+  statusProduct
+);
 router.delete(
   "/delete-user-product/:productId",
   verifyToken,
   deleteUserProduct
 );
 
-
 // reported content routes
-router.get("/get-reported-contents",getReportedContents)
-router.get("/add-reported-content",addReportedContent)
-router.delete("/reported-content/delete/:productId",verifyToken,verifyModerator,deleteReportedContent)
+router.get("/get-reported-contents", getReportedContents);
+router.get("/add-reported-content", addReportedContent);
+router.delete(
+  "/reported-content/delete/:productId",
+  verifyToken,
+  verifyModerator,
+  deleteReportedContent
+);
+router.post("/add-review", addReview);
+
+// get all admin routes
+router.get("/statistics",  getAllStatistics);
 
 export default router;

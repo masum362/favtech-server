@@ -1,6 +1,7 @@
 import productModel from "../model/productModel.js";
 import reportedContentModel from "../model/reportedContentModel.js";
 import userModel from "../model/userModel.js";
+import reviewModel from "../model/reviewModel.js";
 
 const addProduct = async (req, res) => {
   try {
@@ -187,6 +188,38 @@ const deleteReportedContent = async (req, res) => {
   }
 };
 
+const addReview = async (req, res) => {
+  try {
+    const reviewBody = req.body;
+    // const review = {
+    //   productId: "6663530629aabccc193f7963",
+    //   reviewerName: "Md. masum ahmed",
+    //   reviewerEmail: "masumahmed@gmail.com",
+    //   reviewerUid: "ddsfldjldjld",
+    //   reviewerImage: "https://i.ibb.co/BZ2FfFS/17197635-jpgf.jpg",
+    //   reviewDescription: "something went wrong!",
+    //   rating: 5,
+    // };
+
+    const newReview = new reviewModel(reviewBody);
+    await newReview.save();
+    return res.status(200).json(newReview);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const getProductReviews = async (req, res) => {
+  try {
+    const productId = req.params;
+
+    const reviews = await reviewModel.find({ productId: productId });
+    return res.status(200).jso(reviews);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export {
   addProduct,
   getUserProduct,
@@ -196,5 +229,7 @@ export {
   statusProduct,
   getReportedContents,
   addReportedContent,
-  deleteReportedContent
+  deleteReportedContent,
+  addReview,
+  getProductReviews
 };
