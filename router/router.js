@@ -13,6 +13,7 @@ import {
   getUserProduct,
   deleteUserProduct,
   productReviewQueues,
+  featureProduct
 } from "../controllers/productController.js";
 
 const router = express.Router();
@@ -34,6 +35,7 @@ router.post("/payment/subscribe", verifyToken, subscribeUser);
 router.get("/get-user-all-products", verifyToken, getUserProduct);
 router.get("/products", verifyToken, verifyModerator, productReviewQueues);
 router.post("/add-product", verifyToken, addProduct);
+router.patch("/product/feature/:productId", verifyToken,verifyModerator,featureProduct)
 router.delete(
   "/delete-user-product/:productId",
   verifyToken,

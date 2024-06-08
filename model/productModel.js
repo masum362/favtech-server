@@ -43,6 +43,10 @@ const productSchema = mongoose.Schema(
       type:String,
       default:"pending",
       enum:["pending", "accepted", "rejected"]
+    },
+    isFeatured:{
+      type:Boolean,
+      default:false,
     }
   },
   { timestamps: true }

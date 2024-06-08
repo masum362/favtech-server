@@ -83,7 +83,6 @@ const deleteUserProduct = async (req, res) => {
 };
 
 const productReviewQueues = async (req, res) => {
- 
   const userId = req.userId;
   try {
     const pipeline = [
@@ -116,4 +115,24 @@ const productReviewQueues = async (req, res) => {
   }
 };
 
-export { addProduct, getUserProduct, deleteUserProduct, productReviewQueues };
+const featureProduct = async (req, res) => {
+  try {
+    const { productId } = req.params;
+
+    const product = await productModel.findOne({ _id: productId });
+
+    if (product.isFeatured) {
+      return res.status(204).json({ message: "Already featured product!" });
+    } else {
+      const response = await productModel.updateOne(
+        { _id: productId },
+        { isFeatured: true }
+      );
+      return res.status(200).json({ message: "Success!", response });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export { addProduct, getUserProduct, deleteUserProduct, productReviewQueues,featureProduct };
