@@ -7,7 +7,7 @@ import {
   paymentWithStripe,
   subscribeUser,
 } from "../controllers/userController.js";
-import { verifyModerator, verifyToken } from "./auth.js";
+import { verifyAdmin, verifyModerator, verifyToken } from "./auth.js";
 import {
   addProduct,
   getUserProduct,
@@ -16,7 +16,8 @@ import {
   featureProduct,
   statusProduct,
   getReportedContents,
-  addReportedContent
+  addReportedContent,
+  deleteReportedContent
 } from "../controllers/productController.js";
 
 const router = express.Router();
@@ -50,5 +51,6 @@ router.delete(
 // reported content routes
 router.get("/get-reported-contents",getReportedContents)
 router.get("/add-reported-content",addReportedContent)
+router.delete("/reported-content/delete/:productId",verifyToken,verifyModerator,deleteReportedContent)
 
 export default router;

@@ -155,9 +155,7 @@ const statusProduct = async (req, res) => {
 
 const getReportedContents = async (req, res) => {
   try {
-    const contents = await reportedContentModel
-      .find({})
-      .populate("productId");
+    const contents = await reportedContentModel.find({}).populate("productId");
     return res.status(200).json(contents);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -166,11 +164,24 @@ const getReportedContents = async (req, res) => {
 
 const addReportedContent = async (req, res) => {
   try {
-   const productId = req.params;
+    const productId = req.params;
 
     const newContent = new reportedContentModel(productId);
     const response = await newContent.save();
     return res.status(200).json(newContent);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const deleteReportedContent = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    await reportedContentModel.deleteOne({
+      productId,
+    });
+    await productModel.deleteOne({ _id: productId });
+    return res.status(200).json({ message: "Successfully deleted" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -185,4 +196,5 @@ export {
   statusProduct,
   getReportedContents,
   addReportedContent,
+  deleteReportedContent
 };
