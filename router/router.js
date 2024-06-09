@@ -20,7 +20,8 @@ import {
   deleteReportedContent,
   addReview,
   getFeauredProducts,
-  upVoteUser
+  upVoteUser,
+  getTrendingProducts
 } from "../controllers/productController.js";
 import {
   getAllStatistics,
@@ -53,6 +54,7 @@ router.patch("/user/role/remove/:userId", verifyToken, verifyAdmin, removeRoleUs
 
 // product routes
 router.get("/featuredProduct",getFeauredProducts)
+router.get("/trending-products",getTrendingProducts)
 router.patch('/upvote/:productId',verifyToken,upVoteUser)
 router.get("/get-user-all-products", verifyToken, getUserProduct);
 router.get("/products", verifyToken, verifyModerator, productReviewQueues);

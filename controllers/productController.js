@@ -231,6 +231,15 @@ const getFeauredProducts = async (req, res) => {
   }
 };
 
+const getTrendingProducts = async (req, res) => {
+  try {
+    const response = await productModel.find().sort({ upvote: -1 });
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 const upVoteUser = async (req, res) => {
   const { userId } = req.body;
   const { productId } = req.params;
@@ -275,5 +284,6 @@ export {
   addReview,
   getProductReviews,
   getFeauredProducts,
+  getTrendingProducts,
   upVoteUser,
 };
