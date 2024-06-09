@@ -137,7 +137,7 @@ const statusProduct = async (req, res) => {
   try {
     const { productId } = req.params;
     const { status } = req.body;
-    console.log({ status });
+  
     const product = await productModel.findOne({ _id: productId });
 
     if (product.status === status) {
@@ -209,12 +209,13 @@ const addReview = async (req, res) => {
 };
 
 const getProductReviews = async (req, res) => {
-  try {
-    const productId = req.params;
 
+  try {
+    const {productId} = req.params;
     const reviews = await reviewModel.find({ productId: productId });
-    return res.status(200).jso(reviews);
+    return res.status(200).json(reviews);
   } catch (error) {
+  
     return res.status(500).json({ message: error.message });
   }
 };
@@ -242,12 +243,12 @@ const getTrendingProducts = async (req, res) => {
 const upVoteUser = async (req, res) => {
   const { userId } = req.body;
   const { productId } = req.params;
-  console.log({ productId, userId });
+
   try {
     const product = await productModel.findOne({ _id: productId });
-    console.log(product);
+  
     const isUserAlreadyVoted = product.upvotedUsers.includes(userId);
-    console.log({ isUserAlreadyVoted });
+  
 
     if (isUserAlreadyVoted) {
       product.upvote -= 1;
@@ -269,7 +270,7 @@ const upVoteUser = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
- 
+
 const getProduct = async (req, res) => {
   try {
     const id = req.params.id;

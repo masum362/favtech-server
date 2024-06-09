@@ -22,7 +22,8 @@ import {
   getFeauredProducts,
   upVoteUser,
   getTrendingProducts,
-  getProduct
+  getProduct,
+  getProductReviews
 } from "../controllers/productController.js";
 import {
   getAllStatistics,
@@ -81,10 +82,15 @@ router.delete(
   deleteUserProduct
 );
 
+// reviews product
+router.get("/get-reviews/:productId",getProductReviews)
+router.post("/add-review", addReview);
+
+
 // reported content routes
 router.get("/get-reported-contents", getReportedContents);
 router.post("/add-reported-content/:productId", addReportedContent);
-router.post("/add-review", addReview);
+
 router.delete(
   "/reported-content/delete/:productId",
   verifyToken,
