@@ -36,8 +36,13 @@ const getAllStatistics = async (req, res) => {
 
 const getUsers = async (req, res) => {
   console.log("called");
+  const userId = req.userId;
   try {
-    const response = await userModel.find({});
+    const response = await userModel.find({
+      uid: {
+        $ne: userId,
+      },
+    });
 
     return res.status(200).json(response);
   } catch (error) {
@@ -65,4 +70,25 @@ const setRoleUser = async (req, res) => {
   }
 };
 
-export { getAllStatistics, setRoleUser, getUsers };
+const removeRoleUser = async (req, res) => {
+  console.log("called");
+  const { userId } = req.params;
+  // const userId = req.userId;
+  // const user = req.user;
+  try {
+    const user = await userModel.findOne({ uid: userId });
+    if (user.role !== "user") {
+      const response = await userModel.updateOne(
+        { uid: userId },
+        { role: "user" }
+      );
+      return res.status(200).json(response);
+    } else {
+      return res.status(204).json({ message: `already user is a normal user` });
+    }
+  } catch (error) {
+    return res.status(501).json({ message: error.message });
+  }
+};
+
+export { getAllStatistics, setRoleUser, getUsers, removeRoleUser };

@@ -23,6 +23,7 @@ import {
 import {
   getAllStatistics,
   getUsers,
+  removeRoleUser,
   setRoleUser,
 } from "../controllers/adminController.js";
 
@@ -44,6 +45,9 @@ router.post("/payment/subscribe", verifyToken, subscribeUser);
 // admin only routes
 router.get("/users", verifyToken, verifyAdmin, getUsers);
 router.patch("/user/role/:userId", verifyToken, verifyAdmin, setRoleUser);
+router.patch("/user/role/remove/:userId", verifyToken, verifyAdmin, removeRoleUser);
+
+
 
 // product routes
 router.get("/get-user-all-products", verifyToken, getUserProduct);
