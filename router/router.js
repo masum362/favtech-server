@@ -19,6 +19,8 @@ import {
   addReportedContent,
   deleteReportedContent,
   addReview,
+  getFeauredProducts,
+  upVoteUser
 } from "../controllers/productController.js";
 import {
   getAllStatistics,
@@ -50,6 +52,8 @@ router.patch("/user/role/remove/:userId", verifyToken, verifyAdmin, removeRoleUs
 
 
 // product routes
+router.get("/featuredProduct",getFeauredProducts)
+router.patch('/upvote/:productId',verifyToken,upVoteUser)
 router.get("/get-user-all-products", verifyToken, getUserProduct);
 router.get("/products", verifyToken, verifyModerator, productReviewQueues);
 router.post("/add-product", verifyToken, addProduct);

@@ -35,6 +35,9 @@ const productSchema = mongoose.Schema(
       type:Number,
       default: 0,
     },
+    upvotedUsers:{
+      type: [String],
+  },
     downVoe:{
       type:Number,
       default: 0,

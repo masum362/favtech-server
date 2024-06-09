@@ -118,8 +118,11 @@ const paymentWithStripe = async (req, res) => {
 };
 
 const subscribeUser = async (req, res) => {
+  
+  
   const { paymentIntentId, uid } = req.body;
 
+  console.log({paymentIntentId,uid})
   try {
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
 

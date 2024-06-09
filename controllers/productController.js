@@ -100,7 +100,7 @@ const productReviewQueues = async (req, res) => {
         },
       },
       {
-        $sort: { statusOrder: 1 },
+        $sort: { statusOrder: 1, createdAt: -1 },
       },
     ];
 
@@ -220,6 +220,48 @@ const getProductReviews = async (req, res) => {
   }
 };
 
+const getFeauredProducts = async (req, res) => {
+  try {
+    const response = await productModel
+      .find({ isFeatured: true })
+      .sort({ createdAt: -1 });
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const upVoteUser = async (req, res) => {
+  const { userId } = req.body;
+  const { productId } = req.params;
+  console.log({ productId, userId });
+  try {
+    const product = await productModel.findOne({ _id: productId });
+    console.log(product);
+    const isUserAlreadyVoted = product.upvotedUsers.includes(userId);
+    console.log({ isUserAlreadyVoted });
+
+    if (isUserAlreadyVoted) {
+      product.upvote -= 1;
+      const filteredproductupvotedUsers = product.upvotedUsers.filter(
+        (user) => user !== userId
+      );
+      product.upvotedUsers = filteredproductupvotedUsers;
+      const response = await product.save();
+      return res.status(200).json({ message: "User upvote removed", response });
+    } else {
+      product.upvote += 1;
+      product.upvotedUsers.push(userId);
+      const response = await product.save();
+      return res
+        .status(200)
+        .json({ message: "User successfully voted", response });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export {
   addProduct,
   getUserProduct,
@@ -231,5 +273,7 @@ export {
   addReportedContent,
   deleteReportedContent,
   addReview,
-  getProductReviews
+  getProductReviews,
+  getFeauredProducts,
+  upVoteUser,
 };
