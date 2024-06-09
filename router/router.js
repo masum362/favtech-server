@@ -21,7 +21,8 @@ import {
   addReview,
   getFeauredProducts,
   upVoteUser,
-  getTrendingProducts
+  getTrendingProducts,
+  getProduct
 } from "../controllers/productController.js";
 import {
   getAllStatistics,
@@ -55,6 +56,7 @@ router.patch("/user/role/remove/:userId", verifyToken, verifyAdmin, removeRoleUs
 // product routes
 router.get("/featuredProduct",getFeauredProducts)
 router.get("/trending-products",getTrendingProducts)
+router.get("/product/:id",verifyToken,getProduct)
 router.patch('/upvote/:productId',verifyToken,upVoteUser)
 router.get("/get-user-all-products", verifyToken, getUserProduct);
 router.get("/products", verifyToken, verifyModerator, productReviewQueues);
@@ -81,7 +83,7 @@ router.delete(
 
 // reported content routes
 router.get("/get-reported-contents", getReportedContents);
-router.get("/add-reported-content", addReportedContent);
+router.post("/add-reported-content/:productId", addReportedContent);
 router.post("/add-review", addReview);
 router.delete(
   "/reported-content/delete/:productId",

@@ -166,9 +166,8 @@ const getReportedContents = async (req, res) => {
 const addReportedContent = async (req, res) => {
   try {
     const productId = req.params;
-
     const newContent = new reportedContentModel(productId);
-    const response = await newContent.save();
+    await newContent.save();
     return res.status(200).json(newContent);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -270,6 +269,16 @@ const upVoteUser = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+ 
+const getProduct = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const product = await productModel.findOne({ _id: id });
+    return res.status(200).json(product);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 export {
   addProduct,
@@ -286,4 +295,5 @@ export {
   getFeauredProducts,
   getTrendingProducts,
   upVoteUser,
+  getProduct,
 };
