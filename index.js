@@ -6,12 +6,14 @@ import router from "./router/router.js";
 import run from "./db/connection.js";
 
 dotenv.config();
+
 const corsConfig = {
-  origin:
-    process.env.NODE_ENV === "production"
-      ? ["http://localhost:5173"]
-      : ["http://localhost:5173"],
   credentials: true,
+    origin: [
+      "http://localhost:5173",
+      "https://producthunt-lite.web.app",
+      "https://producthunt-lite..firebaseapp.com",
+    ]
 };
 
 
