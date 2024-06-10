@@ -58,7 +58,7 @@ const addProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
   console.log("called updateProduct");
   try {
-    const {productId} = req.params;
+    const { productId } = req.params;
     const { imageURL, name, description, tags, external_links } =
       req.body.product;
     const product = await productModel.findOne({ _id: productId });
@@ -311,7 +311,8 @@ const getAllProducts = async (req, res) => {
     const products = await productModel
       .find({ status: "accepted", tags: { $regex: regex } })
       .skip(intSkip)
-      .limit(intLimit);
+      .limit(intLimit)
+      .sort({ upvote: -1 });
 
     // console.log(products);
     return res.status(200).json(products);
