@@ -55,6 +55,27 @@ const addProduct = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+const updateProduct = async (req, res) => {
+  console.log("called updateProduct");
+  try {
+    const {productId} = req.params;
+    const { imageURL, name, description, tags, external_links } =
+      req.body.product;
+    const product = await productModel.findOne({ _id: productId });
+    product.imageURL = imageURL;
+    product.name = name;
+    product.description = description;
+    product.tags = tags;
+    product.external_links = external_links;
+
+    const response = await product.save();
+    return res
+      .status(200)
+      .json({ response, message: "product updated successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 const getUserProduct = async (req, res) => {
   try {
@@ -137,7 +158,7 @@ const statusProduct = async (req, res) => {
   try {
     const { productId } = req.params;
     const { status } = req.body;
-  
+
     const product = await productModel.findOne({ _id: productId });
 
     if (product.status === status) {
@@ -209,13 +230,11 @@ const addReview = async (req, res) => {
 };
 
 const getProductReviews = async (req, res) => {
-
   try {
-    const {productId} = req.params;
+    const { productId } = req.params;
     const reviews = await reviewModel.find({ productId: productId });
     return res.status(200).json(reviews);
   } catch (error) {
-  
     return res.status(500).json({ message: error.message });
   }
 };
@@ -246,9 +265,8 @@ const upVoteUser = async (req, res) => {
 
   try {
     const product = await productModel.findOne({ _id: productId });
-  
+
     const isUserAlreadyVoted = product.upvotedUsers.includes(userId);
-  
 
     if (isUserAlreadyVoted) {
       product.upvote -= 1;
@@ -280,9 +298,43 @@ const getProduct = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+const getAllProducts = async (req, res) => {
+  console.log("called");
+  try {
+    // const id = req.params.id;
+    const { skip, limit, search } = req.query;
+    const intSkip = parseInt(skip);
+    const intLimit = parseInt(limit);
+    // console.log({ skip, intSkip, intLimit });
+    // const regex = new RegExp(search, "i");
+    const regex = new RegExp(search, "i");
+    const products = await productModel
+      .find({ status: "accepted", tags: { $regex: regex } })
+      .skip(intSkip)
+      .limit(intLimit);
+
+    // console.log(products);
+    return res.status(200).json(products);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+const getNumberOfProducts = async (req, res) => {
+  try {
+    // const id = req.params.id;
+    const numberOfProducts = await productModel.countDocuments({
+      status: "accepted",
+    });
+
+    return res.status(200).json(numberOfProducts);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 export {
   addProduct,
+  updateProduct,
   getUserProduct,
   deleteUserProduct,
   productReviewQueues,
@@ -297,4 +349,6 @@ export {
   getTrendingProducts,
   upVoteUser,
   getProduct,
+  getAllProducts,
+  getNumberOfProducts,
 };

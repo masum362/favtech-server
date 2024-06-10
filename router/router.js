@@ -23,7 +23,10 @@ import {
   upVoteUser,
   getTrendingProducts,
   getProduct,
-  getProductReviews
+  getProductReviews,
+  getAllProducts,
+  getNumberOfProducts,
+  updateProduct
 } from "../controllers/productController.js";
 import {
   getAllStatistics,
@@ -55,13 +58,16 @@ router.patch("/user/role/remove/:userId", verifyToken, verifyAdmin, removeRoleUs
 
 
 // product routes
-router.get("/featuredProduct",getFeauredProducts)
+router.get("/all-products",getAllProducts)
+router.get("/number-of-products",getNumberOfProducts)
+router.get("/featuredProduct",getFeauredProducts);
 router.get("/trending-products",getTrendingProducts)
 router.get("/product/:id",verifyToken,getProduct)
 router.patch('/upvote/:productId',verifyToken,upVoteUser)
 router.get("/get-user-all-products", verifyToken, getUserProduct);
 router.get("/products", verifyToken, verifyModerator, productReviewQueues);
 router.post("/add-product", verifyToken, addProduct);
+router.patch("/update-product/:productId", verifyToken, updateProduct);
 
 // moderator only routes
 router.patch(
