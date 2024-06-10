@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import userModel from "../model/userModel.js";
 import Stripe from "stripe";
 import dotenv from "dotenv";
+import couponModel from "../model/couponMode.js";
 dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -98,12 +99,12 @@ const isModeratorUser = async (req, res) => {
 };
 
 const paymentWithStripe = async (req, res) => {
-  const { customerEmail } = req.body;
+  const { customerEmail, amount } = req.body;
 
   try {
     // Create a new customer and then create an invoice item then invoice it:
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 5000, // $50 in cents
+      amount: amount * 100, // $50 in cents
       currency: "usd",
       receipt_email: customerEmail,
       description: "Subscription fee",
@@ -118,11 +119,9 @@ const paymentWithStripe = async (req, res) => {
 };
 
 const subscribeUser = async (req, res) => {
-  
-  
   const { paymentIntentId, uid } = req.body;
 
-  console.log({paymentIntentId,uid})
+  console.log({ paymentIntentId, uid });
   try {
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
@@ -144,7 +143,22 @@ const subscribeUser = async (req, res) => {
   }
 };
 
-
+const useCoupon = async (req, res) => {
+  try {
+    const { coupon } = req.body;
+    console.log({ coupon });
+    const isValidCoupon = await couponModel.findOne({ coupon_code: coupon });
+    if (isValidCoupon) {
+      const amount = parseInt(100 - isValidCoupon.amount);
+      console.log(amount);
+      return res.status(200).json(amount);
+    } else {
+      return res.status(204).json({ message: "Invalid coupon" });
+    }
+  } catch (error) {
+    return res.status(501).json({ message: error.message });
+  }
+};
 
 export {
   registerUser,
@@ -153,5 +167,5 @@ export {
   isModeratorUser,
   paymentWithStripe,
   subscribeUser,
-
+  useCoupon,
 };

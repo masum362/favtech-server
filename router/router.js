@@ -6,6 +6,7 @@ import {
   isModeratorUser,
   paymentWithStripe,
   subscribeUser,
+  useCoupon
 } from "../controllers/userController.js";
 import { verifyAdmin, verifyModerator, verifyToken } from "./auth.js";
 import {
@@ -27,6 +28,7 @@ import {
   getAllProducts,
   getNumberOfProducts,
   updateProduct,
+  
 } from "../controllers/productController.js";
 import {
   getAllStatistics,
@@ -113,6 +115,9 @@ router.delete(
 
 // coupons api
 router.get("/coupons", getCoupons);
+router.post("/use/coupon",verifyToken,useCoupon)
+
+
 // get all admin routes
 router.get("/statistics", verifyToken, verifyAdmin, getAllStatistics);
 router.get("/coupon/:couponId", verifyToken, verifyAdmin, getSigleCoupon);
