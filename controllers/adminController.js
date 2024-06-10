@@ -2,6 +2,7 @@ import userModel from "../model/userModel.js";
 import productModel from "../model/productModel.js";
 import reportedContentModel from "../model/reportedContentModel.js";
 import reviewModel from "../model/productModel.js";
+import couponModel from "../model/couponMode.js";
 
 const getAllStatistics = async (req, res) => {
   console.log("called");
@@ -91,4 +92,84 @@ const removeRoleUser = async (req, res) => {
   }
 };
 
-export { getAllStatistics, setRoleUser, getUsers, removeRoleUser };
+const addCoupon = async (req, res) => {
+  try {
+    const { coupon } = req.body;
+
+    const isAlradyCouponAdded = await couponModel.findOne({
+      coupon_code: coupon.coupon_code,
+    });
+
+    if (isAlradyCouponAdded) {
+      return res.status(204).json({ message: "coupon already added" });
+    }
+
+    const newCoupon = new couponModel(coupon);
+    const response = await newCoupon.save();
+
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(501).json({ message: error.message });
+  }
+};
+
+const getCoupons = async (req, res) => {
+  try {
+    const response = await couponModel.find({}).sort({ createdAt: -1 });
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(501).json({ message: error.message });
+  }
+};
+
+const getSigleCoupon = async (req, res) => {
+  try {
+    const { couponId } = req.params;
+    const coupon = await couponModel.findOne({ _id: couponId });
+
+    return res.status(200).json(coupon);
+  } catch (error) {
+    return res.status(501).json({ message: error.message });
+  }
+};
+
+const deleteCoupon = async (req, res) => {
+  try {
+    const { couponId } = req.params;
+    const response = await couponModel.deleteOne({ _id: couponId });
+
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(501).json({ message: error.message });
+  }
+};
+
+const updateCoupon = async (req, res) => {
+  try {
+    const { couponId } = req.params;
+    const { coupon_code, expiry_date, description, amount } = req.body.coupon;
+    const coupon = await couponModel.findOne({ _id: couponId });
+
+    coupon.coupon_code = coupon_code;
+    coupon.amount = amount;
+    coupon.description = description;
+    coupon.expiry_date = expiry_date;
+    const response = await coupon.save();
+
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(501).json({ message: error.message });
+  }
+};
+
+export {
+  getAllStatistics,
+  setRoleUser,
+  getUsers,
+  removeRoleUser,
+  addCoupon,
+  getCoupons,
+  getSigleCoupon,
+  deleteCoupon,
+  updateCoupon,
+};

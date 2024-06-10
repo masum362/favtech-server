@@ -26,13 +26,18 @@ import {
   getProductReviews,
   getAllProducts,
   getNumberOfProducts,
-  updateProduct
+  updateProduct,
 } from "../controllers/productController.js";
 import {
   getAllStatistics,
   getUsers,
   removeRoleUser,
   setRoleUser,
+  addCoupon,
+  getCoupons,
+  getSigleCoupon,
+  deleteCoupon,
+  updateCoupon,
 } from "../controllers/adminController.js";
 
 const router = express.Router();
@@ -53,17 +58,20 @@ router.post("/payment/subscribe", verifyToken, subscribeUser);
 // admin only routes
 router.get("/users", verifyToken, verifyAdmin, getUsers);
 router.patch("/user/role/:userId", verifyToken, verifyAdmin, setRoleUser);
-router.patch("/user/role/remove/:userId", verifyToken, verifyAdmin, removeRoleUser);
-
-
+router.patch(
+  "/user/role/remove/:userId",
+  verifyToken,
+  verifyAdmin,
+  removeRoleUser
+);
 
 // product routes
-router.get("/all-products",getAllProducts)
-router.get("/number-of-products",getNumberOfProducts)
-router.get("/featuredProduct",getFeauredProducts);
-router.get("/trending-products",getTrendingProducts)
-router.get("/product/:id",verifyToken,getProduct)
-router.patch('/upvote/:productId',verifyToken,upVoteUser)
+router.get("/all-products", getAllProducts);
+router.get("/number-of-products", getNumberOfProducts);
+router.get("/featuredProduct", getFeauredProducts);
+router.get("/trending-products", getTrendingProducts);
+router.get("/product/:id", verifyToken, getProduct);
+router.patch("/upvote/:productId", verifyToken, upVoteUser);
 router.get("/get-user-all-products", verifyToken, getUserProduct);
 router.get("/products", verifyToken, verifyModerator, productReviewQueues);
 router.post("/add-product", verifyToken, addProduct);
@@ -89,9 +97,8 @@ router.delete(
 );
 
 // reviews product
-router.get("/get-reviews/:productId",getProductReviews)
+router.get("/get-reviews/:productId", getProductReviews);
 router.post("/add-review", addReview);
-
 
 // reported content routes
 router.get("/get-reported-contents", getReportedContents);
@@ -105,6 +112,11 @@ router.delete(
 );
 
 // get all admin routes
-router.get("/statistics", getAllStatistics);
+router.get("/statistics", verifyToken, verifyAdmin, getAllStatistics);
+router.get("/coupons", verifyToken, verifyAdmin, getCoupons);
+router.get("/coupon/:couponId", verifyToken, verifyAdmin, getSigleCoupon);
+router.post("/add/coupon", verifyToken, verifyAdmin, addCoupon);
+router.patch("/update/coupon/:couponId", verifyToken, verifyAdmin, updateCoupon);
+router.delete("/delete/coupon/:couponId", verifyToken, verifyAdmin, deleteCoupon);
 
 export default router;
