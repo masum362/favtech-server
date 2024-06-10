@@ -111,12 +111,23 @@ router.delete(
   deleteReportedContent
 );
 
+// coupons api
+router.get("/coupons", getCoupons);
 // get all admin routes
 router.get("/statistics", verifyToken, verifyAdmin, getAllStatistics);
-router.get("/coupons", verifyToken, verifyAdmin, getCoupons);
 router.get("/coupon/:couponId", verifyToken, verifyAdmin, getSigleCoupon);
 router.post("/add/coupon", verifyToken, verifyAdmin, addCoupon);
-router.patch("/update/coupon/:couponId", verifyToken, verifyAdmin, updateCoupon);
-router.delete("/delete/coupon/:couponId", verifyToken, verifyAdmin, deleteCoupon);
+router.patch(
+  "/update/coupon/:couponId",
+  verifyToken,
+  verifyAdmin,
+  updateCoupon
+);
+router.delete(
+  "/delete/coupon/:couponId",
+  verifyToken,
+  verifyAdmin,
+  deleteCoupon
+);
 
 export default router;
