@@ -1,0 +1,6 @@
+NODE_ENV="your environment mode"
+
+PORT="your port number"
+MONGODBURL="your MongoDB URL"
+JWT_SECRET="your JWT secret"
+STRIPE_SECRET_KEY="stripe secret key"
